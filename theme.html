@@ -2,249 +2,453 @@
 > git commit -am 'making some changes'
 > git push
 
-<!DOCTYPE html>
-<html prefix="og: http://ogp.me/ns#" xmlns:og="http://ogp.me/ns#">
-  <head>
-    <meta charset="utf-8">
-    <title>
-      {% if is_login %}Login
-      {% elif is_home %}{{ site.author }}
-      {% elif is_tag %}{{ tag }}
-      {% elif post %}{{ post.title }}
-      {% endif %}
-      | {{ site.name }}
-    </title>
-
-    {{ header_meta }}
-
-    <link rel="stylesheet" type="text/css" href="{{ assets('css/style.css') }}">
-
-    <!--[if IE 7]>
-      <link href="http://postach.io/static/themes/_assets/fontawesome/css/font-awesome-ie7.min.css" rel="stylesheet">
-    <![endif]-->
-
-    <!--
-    <style>
-      /**
-       * Your custom override CSS goes here. If you wanted to override the default link colour and hover state, you would do this:
-       *
-       *  a {
-       *      color: #333; /* Override the default colour with a not-quite-black that is easy on the eyes on white screens */
-       *  }
-       *
-       *  a:hover {
-       *      color: #545454; /* This will now change the hover state as well */
-       *  }
-       *
-       *  You can put anything you want to override in here, so be creative!
-       */
-    </style>
-    -->
-
-    {% if site.analytics %}
-    <script>
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', '{{ site.analytics }}']);
-    _gaq.push(['_trackPageview']);
-    (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-    </script>
-    {% endif %}
-  </head>
-  <body>
-
-    {% if is_login %}
-
-      {{ login_form }}
-
-    {% else  %}
-
-    <div class="row">
-      <div class="span4 header">
-        <div class="bg-img" style="background-image: url('{% if site.cover_photo %}{{ site.cover_photo }}{% else %}{{ assets('images/background.jpg') }}{% endif %}');"></div>
-        <div class="gradient"></div>
-        <div class="title">
-          <h1>{{ site.name }}</h1>
-          <ul class="social">
-            {% if site.twitter %}
-            <li>
-              <a href="{{ site.twitter }}" title="Twitter" target="_blank">
-                <i class="icon-twitter"></i> Twitter
-              </a>
-            </li>
-            {% endif %}
-
-            {% if site.facebook %}
-            <li>
-              <a href="{{ site.facebook }}" title="Facebook" target="_blank">
-                <i class="icon-facebook-sign"></i> Facebook
-              </a>
-            </li>
-            {% endif %}
-
-            {% if site.googleplus %}
-            <li>
-              <a href="{{ site.googleplus }}?rel=author" title="Google+" target="_blank">
-                <i class="icon-google-plus"></i> Google+
-              </a>
-            </li>
-            {% endif %}
-
-            {% if site.linkedin %}
-            <li>
-              <a href="{{ site.linkedin }}" title="LinkedIn" target="_blank">
-                <i class="icon-linkedin"></i> LinkedIn
-              </a>
-            </li>
-            {% endif %}
-            <li>
-              <a href="{{ site.atom_url }}" title="RSS" target="_blank">
-                <i class="icon-rss"></i> RSS
-              </a>
-            </li>
-          </ul>
-        </div>
-        <a class="logo" href="/">
-          <img class="avatar" src="{{ site.avatar }}" alt="{{ site.author }}" width="100%" height="100%" />
-        </a>
-        <div class="site-description">
-          <ul>
-          <li><a href="/">Blog</a></li>
-          {% if pages %}
-          {% for page in pages %}
-          <li><a href="{{ page.permalink }}" class="{{ set_active(page.permalink) }}">{{ page.title }}</a></li>
-          {% endfor %}
-          {% endif %}
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="row wrapper">
-
-      <div class="span4 spacer"></div>
-
-      {% if is_home or is_tag %}
-
-      <div class="span6 offset1 posts">
-
-          {% if is_tag %}
-          <h4 class="sub-heading span6">Showing all posts tagged {{ tag }}:</h4>
-          {% endif %}
-
-          {% if posts %}
-          {% for post in posts %}
-          <div class="post span6">
-            <div class="row">
-              <div class="span6">
-                <h2><a href="{{ post.permalink }}">{{ post.title }}</a></h2>
-              </div>
-            </div>
-            <div class="post-body" data-type-cleanup="true">
-              {{ post.content }}
-            </div>
-            <div class="post-info">
-              <div class="info-left">
-                <p class="date">{{ post.created_at|format_date }}</p>
-              </div>
-              <div class="info-right">
-                <p class="read-more"><a href="{{ post.permalink }}">Read More &raquo;</a></p>
-              </div>
-            </div>
-          </div>
-          {% endfor %}
-          {% if not is_tag %}
-          <div class="pagination span6">
-            {% if pagination.prev %}<a href="{{ pagination.prev }}" class="post-prev">&larr; View Previous Posts</a>{% endif %}
-            {% if pagination.next %}<a href="{{ pagination.next }}" class="post-next">View More Posts &rarr;</a>{% endif %}
-          </div>
-          {% endif %}
-          {% else %}
-          <h4 class="sub-heading span6">No Posts Yet :(</h4>
-          {% endif %}
-      </div>
-
-      {% elif post %}
-
-      <div class="span6 offset1 posts">
-        <div class="post whole span6">
-          <h1>{{ post.title }}</h1>
-          <div class="post-info">
-            <div class="info-left">
-              <p class="date">{{ post.created_at|format_date }}</p>
-            </div>
-            <div class="info-right">
-              <p class="comments">
-                <a href="/"><i class="icon-comment"></i> 0</a>
-              </p>
-            </div>
-          </div>
-          <div class="post-body">
-            <div class="post-content" data-type-cleanup="true">
-              {{ post.content }}
-            </div>
-
-            {% if post.type == 'link' %}
-            <p><a href="{{ post.url }}"><i class="icon-share"></i> {{ post.url }}</a></p>
-            {% endif %}
-
-            {{ theme.social.bar }}
-
-            {% if post.tags %}
-            <ul class="post-tags">
-            {% for tag in post.tags %}
-              <li><a href="/tag/{{ tag }}">{{ tag|format_tag(link=False, humanize=True) }}</a></li>
-            {% endfor %}
-            </ul>
-            {% endif %}
-          </div>
-          <div class="post-footer">
-            <p class="back"><a href="/">&laquo; Go Back</a></p>
-          </div>
-          {% if site.disqus %}
-          <div class="post-comments">
-            <div id="disqus_thread"></div>
-            <script>
-              var disqus_shortname = '{{ site.disqus }}';
-              var disqus_url = '{{site.base_url}}{{ post.permalink }}';
-              (function() {
-                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-                dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-              })();
-            </script>
-          </div>
-          {% endif %}
-        </div>
-      </div>
-
-    {% elif post.type == 'page' %}
-
-      <div class="span6 offset1 posts">
-        <div class="post whole span6">
-          <h1>{{ page.title }}</h1>
-          <div class="post-body" data-type-cleanup="true">
-            {{ page.content }}
-          </div>
-          <div class="post-footer">
-            <p class="back"><a href="/">&laquo; Go Back</a></p>
-          </div>
-        </div>
-      </div>
-
-    {% endif %}
-
-    </div>
-
-    {% endif %}
-
-    {{ footer_meta }}
-
-    <!-- bootstrap -->
-    <script src="http://postach.io/static/themes/_assets/bootstrap/js/bootstrap.min.js" /></script>
-    
-  </body>
-</html>
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+  display: block;
+}
+audio,
+canvas,
+video {
+  display: inline-block;
+}
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+[hidden],
+template {
+  display: none;
+}
+html {
+  font-family: sans-serif;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+}
+a {
+  background: transparent;
+}
+a:focus {
+  outline: thin dotted;
+}
+a:active,
+a:hover {
+  outline: 0;
+}
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+b,
+strong {
+  font-weight: bold;
+}
+dfn {
+  font-style: italic;
+}
+hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+mark {
+  background: #ff0;
+  color: #000;
+}
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, serif;
+  font-size: 1em;
+}
+pre {
+  white-space: pre-wrap;
+}
+q {
+  quotes: "\201C" "\201D" "\2018" "\2019";
+}
+small {
+  font-size: 80%;
+}
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+sup {
+  top: -0.5em;
+}
+sub {
+  bottom: -0.25em;
+}
+img {
+  border: 0;
+}
+svg:not(:root) {
+  overflow: hidden;
+}
+figure {
+  margin: 0;
+}
+fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: 0.35em 0.625em 0.75em;
+}
+legend {
+  border: 0;
+  padding: 0;
+}
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+}
+button,
+input {
+  line-height: normal;
+}
+button,
+select {
+  text-transform: none;
+}
+html input[type="button"],
+button,
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+button[disabled],
+html input[disabled] {
+  cursor: default;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+input[type="search"] {
+  -webkit-appearance: textfield;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+textarea {
+  overflow: auto;
+  vertical-align: top;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+html {
+  font-size: 1.125em;
+  font-family: 'PT Serif';
+  background-color: #282828;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
+a,
+a:link,
+a:visited {
+  text-decoration: none;
+  color: #e3514e;
+}
+a:hover,
+a:active {
+  text-decoration: none;
+  color: #ff3632;
+}
+.wrapper {
+  width: 100%;
+  margin: 0 auto;
+  max-width: 66.66666666666666rem;
+  background-color: #ffffff;
+  -webkit-box-shadow: 0 0 5px rgba(0,0,0,.5);
+  -moz-box-shadow: 0 0 5px rgba(0,0,0,.5);
+  box-shadow: 0 0 5px rgba(0,0,0,.5);
+}
+.header_wrap {
+  display: table;
+  width: 100%;
+  background-color: #0d0603;
+  height: 33.33333333333333rem;
+  text-align: center;
+}
+.site_header {
+  display: table-cell;
+  vertical-align: middle;
+  color: #ffffff;
+}
+.site_header img {
+  margin-bottom: 6.666666666666666rem;
+}
+.site_header h1 {
+  margin: 0 auto;
+  max-width: 38.888888888888886rem;
+  font-family: 'Bentham';
+  font-size: 3.333333333333333rem;
+  font-weight: 400;
+}
+.site_header h1 a {
+  color: inherit;
+}
+.site_header p {
+  margin-bottom: 5.555555555555555rem;
+  font-size: 1.1111111111111112rem;
+  font-style: italic;
+}
+.site_header p a {
+  color: inherit;
+}
+.posts_area {
+  display: block;
+  min-height: 16.666666666666664rem;
+  max-width: 35.55555555555556rem;
+  margin: 0 auto;
+  color: #6f6f6f;
+}
+.tag_header {
+  text-align: center;
+  font-weight: normal;
+  text-transform: uppercase;
+  margin-top: 4.444444444444445rem;
+}
+.post_meta {
+  text-align: center;
+  font-size: 0.7777777777777777rem;
+  text-transform: uppercase;
+  margin-bottom: 3.333333333333333rem;
+}
+.post_date,
+.post_tags {
+  display: inline-block;
+  color: #434343;
+}
+.post_date a,
+.post_tags a {
+  color: inherit;
+}
+.post_date a:hover,
+.post_tags a:hover {
+  color: #ff3632;
+}
+.separator {
+  margin-left: 1.1111111111111112rem;
+  margin-right: 1.1111111111111112rem;
+}
+.post {
+  padding-top: 5.555555555555555rem;
+}
+.post:last-of-type {
+  padding-bottom: 5.555555555555555rem;
+}
+.post h1,
+.post h2,
+.post h3,
+.post h4,
+.post h5,
+.post h6 {
+  font-weight: 400;
+  color: #434343;
+}
+.post img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.title {
+  font-family: 'Bentham';
+  font-size: 2.333333333333333rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  text-align: center;
+  color: #434343;
+}
+.title a {
+  color: inherit;
+}
+.title a:hover,
+.title a:active {
+  color: #5d5d5d;
+}
+.link_display {
+  font-size: 1.2em;
+  text-align: center;
+}
+.after_post {
+  text-align: center;
+  margin-top: 3em;
+  font-weight: bold;
+}
+a.pagination_prev,
+a.pagination_next {
+  width: 50%;
+  display: inline-block;
+  color: #434343;
+}
+a.pagination_prev:hover,
+a.pagination_next:hover,
+a.pagination_prev:active,
+a.pagination_next:active {
+  color: #e3514e;
+}
+.pagination_prev {
+  text-align: left;
+  float: left;
+}
+.pagination_next {
+  text-align: right;
+  float: right;
+}
+.social_links {
+  width: 100%;
+  max-width: 35.55555555555556rem;
+  margin: 3.333333333333333rem auto 6.111111111111111rem;
+}
+.social_links:before,
+.social_links:after {
+  content: " ";
+  display: table;
+}
+.social_links:after {
+  clear: both;
+}
+.social_col {
+  float: left;
+  line-height: 3rem;
+  font-size: 0.8888888888888888rem;
+  text-align: center;
+  color: #555555;
+  border-width: 0.05555555555555555rem 0 0.05555555555555555rem 0.05555555555555555rem;
+  border-color: #838383;
+  border-style: solid;
+}
+.social_col a {
+  width: 100%;
+  height: 100%;
+  display: block;
+  color: inherit;
+}
+.social_col:last-of-type {
+  border-right-width: 0.05555555555555555rem;
+}
+.social_col:hover {
+  border-color: #ff3632 #838383;
+}
+.social_col:hover a {
+  background-color: #ff3632;
+  color: #fff;
+}
+.social_col:hover:last-of-type {
+  border-right-color: #ff3632;
+}
+.social_col:hover:first-of-type {
+  border-color: #838383;
+}
+/* two items */
+.social_col:first-child:nth-last-child(2),
+.social_col:first-child:nth-last-child(2) ~ .social_col {
+  width: 50%;
+}
+/* three items */
+.social_col:first-child:nth-last-child(3),
+.social_col:first-child:nth-last-child(3) ~ .social_col {
+  width: 33.3333%;
+}
+/* four items */
+.social_col:first-child:nth-last-child(4),
+.social_col:first-child:nth-last-child(4) ~ .social_col {
+  width: 25%;
+}
+.site_footer {
+  background-color: #555555;
+  color: #ffffff;
+  text-align: center;
+  line-height: 3.888888888888889rem;
+  font-size: 0.7777777777777777rem;
+}
+@media (max-width: 44rem) {
+  .site_header img {
+    margin-bottom: 2.2222222222222223rem;
+  }
+  .posts_area {
+    padding-left: 2.2222222222222223rem;
+    padding-right: 2.2222222222222223rem;
+  }
+}
+@media (max-width: 30rem) {
+  .site_header {
+    padding-left: 1.1111111111111112rem;
+    padding-right: 1.1111111111111112rem;
+  }
+  .site_header h1 {
+    font-size: 2.5rem;
+  }
+  .site_header p {
+    margin-bottom: 2.7777777777777777rem;
+  }
+  .post {
+    padding-top: 2.7777777777777777rem;
+  }
+  .post:last-of-type {
+    padding-bottom: 2.7777777777777777rem;
+  }
+  .title {
+    font-size: 2rem;
+  }
+  .social_links {
+    margin: 0 auto 3.0555555555555554rem;
+  }
+  .social_col {
+    line-height: 2.2222222222222223rem;
+    font-size: 0.6666666666666666rem;
+  }
+  .site_footer {
+    padding: 0.5555555555555556rem;
+    line-height: normal;
+  }
+}
+@media (max-width: 10em) {
+  html {
+    min-width: 10em;
+  }
+}
